@@ -1,0 +1,27 @@
+conn = new Mongo();
+db = conn.getDB("IncognitoElf");
+db.dropDatabase();
+
+result = db.groups.insert([
+	{
+		group_id: 2,
+		group_name: "Morgan's Group",
+		host_id: 'Enter Facebook ID',
+		members: [
+		"fbid1", "fbid2", "fbid3"
+		],
+		capacity: 12,
+		deadline: "2018-12-25T00:11:40-08:00",
+	},
+]);
+
+print(result);
+
+result = db.users.insert([
+	{
+		user_id: "123",
+		user_name: "Kevin Choi",
+	},
+]);
+
+print(result);
