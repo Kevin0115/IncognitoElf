@@ -134,6 +134,12 @@ export default class GroupInfoScreen extends React.Component {
       <StyledScreen>
         <StyledText style={styles.name} whiteText>{this.state.groupName}</StyledText>
         <StyledText style={styles.info} whiteText>Host: {this.state.host}</StyledText>
+        {
+          (this._imHost()) ?
+          <StyledText style={styles.info} whiteText>Group Code: {this.state.groupID}</StyledText>
+          :
+          null
+        }
         <StyledText style={styles.info} whiteText>Deadline: {formatDate(this.state.deadline)}</StyledText>
         <StyledText style={styles.info} whiteText>Gift Exchange Day: {formatDate(this.state.exchange)}</StyledText>
         <StyledText style={styles.info} whiteText>Member Limit: {this.state.capacity}</StyledText>

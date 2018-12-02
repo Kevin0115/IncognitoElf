@@ -1,0 +1,193 @@
+{
+    "_id": {
+        "$oid": "5c034a49023ea049b4b349b2"
+    },
+    "group_name": "Non-Host",
+    "host_id": "123456",
+    "host_name": "Edmund Oh",
+    "members": [
+        {
+            "user_id": "123456",
+            "name": "Edmund Oh",
+            "assign": null
+        },
+        {
+            "user_id": "2195945737096449",
+            "name": "Edmund Oh",
+            "assign": null
+        },
+        {
+            "user_id": "2195945737096449",
+            "name": "Morgan Law",
+            "assign": null
+        },
+        {
+            "user_id": "2195945737096449",
+            "name": "Rahman",
+            "assign": null
+        },
+        {
+            "user_id": "2195945737096449",
+            "name": "Jeff Bezos",
+            "assign": null
+        },
+        {
+            "user_id": "2195945737096449",
+            "name": "Mark Zuckerberg",
+            "assign": null
+        }
+    ],
+    "capacity": "30",
+    "deadline": "2018-12-02T02:56:51.289Z",
+    "exchange": "2018-12-26T02:56:51.000Z",
+    "shuffled": false,
+    "group_id": "123"
+}
+
+{
+    "_id": {
+        "$oid": "5c034a65023ea049b4b349b3"
+    },
+    "group_name": "Host, Can\u2019t Shuffle",
+    "host_id": "2195945737096449",
+    "host_name": "Kevin Choi",
+    "members": [
+        {
+            "user_id": "2195945737096449",
+            "name": "Kevin Choi",
+            "assign": null
+        },
+        {
+            "user_id": "2195945737096449",
+            "name": "Edmund Oh",
+            "assign": null
+        },
+        {
+            "user_id": "2195945737096449",
+            "name": "Morgan Law",
+            "assign": null
+        },
+        {
+            "user_id": "2195945737096449",
+            "name": "Rahman",
+            "assign": null
+        },
+        {
+            "user_id": "2195945737096449",
+            "name": "Jeff Bezos",
+            "assign": null
+        },
+        {
+            "user_id": "2195945737096449",
+            "name": "Mark Zuckerberg",
+            "assign": null
+        }
+    ],
+    "capacity": "30",
+    "deadline": "2018-12-11T02:56:51.000Z",
+    "exchange": "2018-12-31T02:56:51.000Z",
+    "shuffled": false,
+    "group_id": "370646511"
+}
+
+{
+    "_id": {
+        "$oid": "5c034a7d023ea049b4b349b4"
+    },
+    "group_name": "Host, Already Shuffled",
+    "host_id": "2195945737096449",
+    "host_name": "Kevin Choi",
+    "members": [
+        {
+            "user_id": "2195945737096449",
+            "name": "Kevin Choi",
+            "assign": "Morgan Law"
+        },
+        {
+            "user_id": "2195945737096449",
+            "name": "Edmund Oh",
+            "assign": "Bill Gates"
+        },
+        {
+            "user_id": "2195945737096449",
+            "name": "Morgan Law",
+            "assign": "Edmund Oh"
+        },
+        {
+            "user_id": "2195945737096449",
+            "name": "Rahman",
+            "assign": "Jeff Bezos"
+        },
+        {
+            "user_id": "2195945737096449",
+            "name": "Jeff Bezos",
+            "assign": "Mark Zuckerberg"
+        },
+        {
+            "user_id": "2195945737096449",
+            "name": "Mark Zuckerberg",
+            "assign": "Rahman"
+        },
+        {
+            "user_id": "2195945737096449",
+            "name": "Bill Gates",
+            "assign": "Kevin Choi"
+        }
+    ],
+    "capacity": "20",
+    "deadline": "2018-12-02T02:56:51.000Z",
+    "exchange": "2018-12-26T02:56:51.000Z",
+    "shuffled": true,
+    "group_id": "2071998252"
+}
+
+{
+    "_id": {
+        "$oid": "5c034cb1023ea049b4b349b5"
+    },
+    "group_name": "Host, Needs Shuffle",
+    "host_id": "2195945737096449",
+    "host_name": "Kevin Choi",
+    "members": [
+        {
+            "user_id": "2195945737096449",
+            "name": "Kevin Choi",
+            "assign": null
+        },
+        {
+            "user_id": "2195945737096449",
+            "name": "Edmund Oh",
+            "assign": null
+        },
+        {
+            "user_id": "2195945737096449",
+            "name": "Morgan Law",
+            "assign": null
+        },
+        {
+            "user_id": "2195945737096449",
+            "name": "Rahman",
+            "assign": null
+        },
+        {
+            "user_id": "2195945737096449",
+            "name": "Jeff Bezos",
+            "assign": null
+        },
+        {
+            "user_id": "2195945737096449",
+            "name": "Mark Zuckerberg",
+            "assign": null
+        },
+        {
+            "user_id": "2195945737096449",
+            "name": "Bill Gates",
+            "assign": null
+        }
+    ],
+    "capacity": "30",
+    "deadline": "2018-12-02T02:56:51.289Z",
+    "exchange": "2018-12-19T02:56:51.000Z",
+    "shuffled": false,
+    "group_id": "1358468535"
+}
