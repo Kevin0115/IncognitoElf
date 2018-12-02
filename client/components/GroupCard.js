@@ -1,6 +1,7 @@
 import React from 'react';
 import {
   Image,
+  AsyncStorage,
   Platform,
   ScrollView,
   StyleSheet,
@@ -17,20 +18,39 @@ class GroupCard extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      // Only stuff to display
+      // Only stuff to displayuser
+      userName: '',
       groupName: '',
       deadline: null,
       exchange: null,
       assign: null,
+      members: null,
 
       // determine to display deadline or exchange
       today: new Date(),
     }
   }
 
-  componentDidMount() {
+  async componentDidMount() {
+    this.props.navigation.addListener('willFocus', this._assignData);
+    const userInfo = JSON.parse(await AsyncStorage.getItem('fbUser')); // REMEMBER TO PARSE THINGS FROM ASYNC
+    this.setState({
+      userName: userInfo.name,
+    });
     this._assignData();
     console.log(typeof new Date(this.props.groupInfo.deadline));
+  }
+
+  _findMyAssign = (user, members) => {
+    console.log('Assignment for ' + user);
+    for (let i = 0; i < members.length; i++) {
+      console.log('CURRENT MEMBER');
+      console.log(members[i].name);
+      if (JSON.stringify(members[i].name) == JSON.stringify(user)) {
+        console.log('Found Assignment');
+        this.setState({assign: members[i].assign});
+      }
+    }
   }
 
   _assignData = () => {
@@ -38,8 +58,9 @@ class GroupCard extends React.Component {
       groupName: this.props.groupInfo.group_name,
       deadline: this.props.groupInfo.deadline,
       exchange: this.props.groupInfo.exchange,
-      assign: this.props.groupInfo.assign,
+      members: this.props.groupInfo.members,
     });
+    this._findMyAssign(this.state.userName, this.state.members);
   }
 
   render() {
@@ -50,13 +71,18 @@ class GroupCard extends React.Component {
       >
         <View style={styles.infoContainer}>
           <StyledText style={styles.name}>{this.state.groupName}</StyledText>
-            {
-              this.state.today.getTime() >= (new Date(this.props.groupInfo.deadline)).getTime() ? 
-              <StyledText style={styles.info}>Exchange Date: {formatDate(this.state.exchange)}</StyledText>
-              :
-              <StyledText style={styles.info}>Deadline: {formatDate(this.state.deadline)}</StyledText>
-            }
-          <StyledText style={styles.info}>{this.state.assign}</StyledText>
+          {
+            this.state.today.getTime() >= (new Date(this.props.groupInfo.deadline)).getTime() ? 
+            <StyledText style={styles.info}>Exchange Date: {formatDate(this.state.exchange)}</StyledText>
+            :
+            <StyledText style={styles.info}>Deadline: {formatDate(this.state.deadline)}</StyledText>
+          }
+          {
+            this.state.assign ?
+            <StyledText style={styles.info}>Recipient: {this.state.assign}</StyledText>
+            :
+            <StyledText style={styles.info}>Waiting for Host to Shuffle</StyledText>
+          }
         </View>
         <View style={styles.iconContainer}>
           <Icon
@@ -116,5 +142,6 @@ const styles = StyleSheet.create({
   },
   info: {
     fontSize: 14,
+    marginVertical: 6,
   }
 });

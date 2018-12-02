@@ -23,12 +23,14 @@ export default class GroupInfoScreen extends React.Component {
       userID: null,
       hostID: null,
       groupName: '',
+      groupID: '',
       deadline: null,
       exchange: null,
       host: '',
       capacity: null,
       members: null,
       today: new Date(),
+      isShuffled: false,
     }
   }
 
@@ -40,31 +42,91 @@ export default class GroupInfoScreen extends React.Component {
     const groupInfo = this.props.navigation.getParam('groupInfo');
     this.setState({
       hostID: groupInfo.host_id,
+      groupID: groupInfo.group_id,
       groupName: groupInfo.group_name,
       deadline: groupInfo.deadline,
       capacity: groupInfo.capacity,
       exchange: groupInfo.exchange,
       host: groupInfo.host_name,
       members: groupInfo.members,
+      isShuffled: groupInfo.shuffled,
     })
   }
 
   _imHost = () => {
-    console.log((this.state.hostID));
-    console.log(this.state.userID);
-    console.log(this.state.hostID == this.state.userID);
     return (this.state.hostID == this.state.userID);
   }
 
   _handleShuffle = () => {
-    // Date check?
-    console.log(this.state.today.getTime());
-    console.log((new Date(this.state.deadline).getTime()));
+    // Check we're not shuffling too early
     if (this.state.today.getTime() < (new Date(this.state.deadline).getTime())) {
       Alert.alert('Not Yet!', 'You can only shuffle once the deadline has passed!');
+    } else if (this.state.isShuffled) {
+      Alert.alert('Already Shuffled', 'You can only shuffle once');
     } else {
-      Alert.alert('Shuffled', 'Everyone has been assigned a Secret Santa!');
+      console.log(this.state.members);
+      this._shuffleMembers();
     }
+  }
+
+  // Doing it clientside because LOL why not
+  _shuffleMembers = () => {
+    let indices = [];
+    for (let i = 0; i < this.state.members.length; i++) {
+      indices[i] = i;
+    }
+
+    let cur = this.state.members.length;
+    let temp;
+    let rand;
+
+    // Guarantees no one gets themselves - Fisher-Yates Algorithm
+    while (cur !== 0) {
+      rand = Math.floor(Math.random() * cur);
+      cur -= 1;
+      temp = indices[cur];
+      indices[cur] = indices[rand];
+      indices[rand] = temp;
+    }
+
+    // Check no duplicates (performance implications?) - stack overflow?
+    for (let k = 0; k < this.state.members.length; k++) {
+      if (k == indices[k]) {
+        // Recursively shuffle
+        this._shuffleMembers();
+        // avoid looping
+        return;
+      }
+    }
+
+    console.log(indices);
+
+    for (let src = 0; src < this.state.members.length; src++) {
+      console.log('Member :' + JSON.stringify(this.state.members[src]));
+      this.state.members[src].assign = this.state.members[indices[src]].name;
+    }
+
+    console.log(this.state.members);
+
+    // UPDATE THE MEMBERS LIST IN BACKEND/DB
+    fetch(BASE_URL + '/groups/shuffle/' + this.state.groupID, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(this.state.members),
+    }).then((res) => res.json())
+    .then((response) => {
+      if (response.error) {
+        Alert.alert('Error', 'Invalid Group Code Entered');
+        throw Error(response.error);
+      }
+      console.log('Received: ' + JSON.stringify(response));
+      Alert.alert('Shuffled', 'Everyone has been assigned a Secret Santa!');
+    })
+    .catch((error) => {
+      console.warn('Error: ', error);
+    });
   }
 
   render() {

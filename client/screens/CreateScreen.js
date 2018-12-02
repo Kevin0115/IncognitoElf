@@ -83,6 +83,7 @@ export default class CreateScreen extends React.Component {
             capacity: this.state.capacity,
             deadline: this.state.deadline,
             exchange: this.state.exchange,
+            shuffled: false,
           }
         )
       }).then((res) => res.json())

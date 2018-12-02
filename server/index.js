@@ -127,6 +127,42 @@ MongoClient.connect(url, { useNewUrlParser: true }, function(err, client) {
     );
   });
 
+  app.put('/groups/shuffle/:group_id' , function(request, response) {
+    console.log('SHUFFLE: ' + JSON.stringify(request.body));
+    // Ensure not already shuffled
+    db.collection('groups').findOne(
+      {group_id: request.params.group_id},
+      (err, docs) => {
+        if (err) {
+          console.log(err);
+          response.error(err);
+        } else if (docs.shuffled) {
+          console.log('Already Shuffled');
+          response.json({status: 'already shuffled'});
+        } else {
+          console.log('SHUFFLING');
+          db.collection('groups').update(
+            {group_id: request.params.group_id},
+            {
+              $set: {
+                members: request.body,
+                shuffled: true,
+              }
+            },
+            {upsert: true},
+            (err, docs) => {
+              if (err) {
+                console.log(err);
+                response.error(err);
+              } else {
+                console.log('Saved to DB');
+                response.json({status: 'OK'});
+            }
+          });
+        }
+    });
+  });
+
   // Configure '/users' endpoint
   app.get('/users/:user_id', function(request, response) {
     db.collection('users').findOne({user_id: parseInt(request.params.user_id)}, null, {upsert: true}, (err, docs) => {
