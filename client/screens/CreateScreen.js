@@ -72,6 +72,7 @@ export default class CreateScreen extends React.Component {
           {
             group_name: this.state.groupName,
             host_id: this.state.userID,
+            host_name: this.state.userName,
             members: [
               {
                 user_id: this.state.userID,

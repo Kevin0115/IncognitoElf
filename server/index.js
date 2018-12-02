@@ -129,7 +129,7 @@ MongoClient.connect(url, { useNewUrlParser: true }, function(err, client) {
 
   // Configure '/users' endpoint
   app.get('/users/:user_id', function(request, response) {
-    db.collection('users').findOne({user_id: parseInt(request.params.user_id)}, (err, docs) => {
+    db.collection('users').findOne({user_id: parseInt(request.params.user_id)}, null, {upsert: true}, (err, docs) => {
       if (err) {
         console.log(err);
         response.error(err);
@@ -141,14 +141,17 @@ MongoClient.connect(url, { useNewUrlParser: true }, function(err, client) {
 
   // Create User
   app.post('/users/create', function(request, response) {
-    console.log(request.body);
-    db.collection('users').insertOne(request.body, (err, docs) => {
-      if (err) {
-        console.log(err);
-        response.error(err);
-      } else {
-        console.log('Saved to DB');
-        response.json({status: 'OK'});
+    db.collection('users').update(
+      {id: request.body.id},
+      {...request.body},
+      {upsert: true},
+      (err, docs) => {
+        if (err) {
+          console.log(err);
+          response.error(err);
+        } else {
+          console.log('Saved to DB');
+          response.json({status: 'OK'});
       }
     });
   });

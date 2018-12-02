@@ -25,7 +25,11 @@ export class StyledText extends React.Component {
     return(
       <Text
         {...this.props}
-        style={[this.props.style, styles.styledText]}
+        style={[
+          this.props.style,
+          styles.styledText,
+          (this.props.whiteText) ? styles.whiteText : null,
+        ]}
       />
     );
   }
@@ -48,7 +52,10 @@ export class StyledTextInput extends React.Component {
     return(
       <TextInput
         {...this.props}
-        style={[this.props.style, styles.styledTextInput]}
+        style={[
+          this.props.style,
+          styles.styledTextInput
+        ]}
         placeholderTextColor={'gray'}
         blurOnSubmit={true}
         onSubmitEditing={Keyboard.dismiss}
@@ -73,6 +80,9 @@ export class StyledDatePicker extends React.Component {
 const styles = StyleSheet.create({
   styledText: {
     fontFamily: 'open-sans'
+  },
+  whiteText: {
+    color: '#fff',
   },
   styledTextInput: {
     fontSize: 16,
