@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 import { StyledButton, StyledText, StyledScreen, StyledTextInput } from '../components/StyledElements';
 import Colors from '../constants/Colors';
+import { BASE_URL } from '../constants/Auth';
 
 
 export default class JoinScreen extends React.Component {
@@ -20,6 +21,8 @@ export default class JoinScreen extends React.Component {
     super(props);
     this.state = {
       userID: null,
+      userName: '',
+      groupCode: '',
     }
   }
 
@@ -31,21 +34,52 @@ export default class JoinScreen extends React.Component {
     const userInfo = JSON.parse(await AsyncStorage.getItem('fbUser')); // REMEMBER TO PARSE THINGS FROM ASYNC
     this.setState({
       userID: userInfo.id,
+      userName: userInfo.name,
       groupCode: '',
     });
   }
 
   _joinGroup = async () => {
-    // Handle code entered
-    // API call to /groups/join
-    Alert.alert(
-      'Joined Group',
-      'View on Homescreen',
-      [
-        {text: 'OK', onPress: () => this.props.navigation.navigate('Home')}
-      ],
-      {cancelable: false}
-    );
+    if (this.state.groupCode != null && this.state.groupCode != '') {
+      fetch(BASE_URL + '/groups/join', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(
+          {
+            group_id: this.state.groupCode,
+            user: {
+              user_id: this.state.userID,
+              name: this.state.userName,
+            }
+          }
+        )
+      }).then((res) => res.json())
+      .then((response) => {
+        if (response.error) {
+          Alert.alert('Error', 'Invalid Group Code Entered');
+          throw Error(response.error);
+        }
+        console.log('Received: ' + JSON.stringify(response));
+        Alert.alert(
+          'Successfully Joined Group',
+          'Press OK to go back Home',
+          [
+            {text: 'OK', onPress: () => {
+              this.props.navigation.popToTop();
+              this.props.navigation.navigate('Home');
+            }}
+          ],
+          {cancelable: false}
+        );
+      })
+      .catch((error) => {
+        console.warn('Error: ', error);
+      });
+    } else {
+      Alert.alert('Please Enter a Valid Group Code');
+    }
   }
 
   _handleCodeInput = (code) => {
@@ -60,6 +94,7 @@ export default class JoinScreen extends React.Component {
         <StyledTextInput
           placeholder='Enter Group Code'
           clearTextOnFocus={true}
+          keyboardType='numeric'
           style={styles.codeInput}
           onChangeText={this._handleCodeInput}
         />

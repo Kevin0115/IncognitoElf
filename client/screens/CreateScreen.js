@@ -52,6 +52,7 @@ export default class CreateScreen extends React.Component {
   _retrieveUserData = async () => {
     const userInfo = JSON.parse(await AsyncStorage.getItem('fbUser'));
     this.setState({
+      userName: userInfo.name,
       userID: userInfo.id,
     });
   }
@@ -71,7 +72,13 @@ export default class CreateScreen extends React.Component {
           {
             group_name: this.state.groupName,
             host_id: this.state.userID,
-            members: [this.state.userID],
+            members: [
+              {
+                user_id: this.state.userID,
+                name: this.state.userName,
+                assign: null,
+              }
+            ],
             capacity: this.state.capacity,
             deadline: this.state.deadline,
             exchange: this.state.exchange,
@@ -117,7 +124,10 @@ export default class CreateScreen extends React.Component {
     });
   }
 
-  _showDeadlinePicker = () => this.setState({deadlineModalVisible: true});
+  _showDeadlinePicker = () => {
+    Keyboard.dismiss();
+    this.setState({deadlineModalVisible: true});
+  }
 
   _hideDeadlinePicker = () => this.setState({deadlineModalVisible: false});
 
@@ -130,6 +140,7 @@ export default class CreateScreen extends React.Component {
   };
 
   _showExchangePicker = () => {
+    Keyboard.dismiss();
     if (!this.state.deadlinePicked) {
       Alert.alert('Please Select a Deadline First');
     } else {
@@ -155,9 +166,8 @@ export default class CreateScreen extends React.Component {
   render() {
     return (
       <StyledScreen>
-        <StyledText style={styles.header}>Enter Your Group's Info</StyledText>
         <View style={styles.inputContainer}>
-          <StyledText style={styles.subheader}>Group Name</StyledText>
+        <StyledText style={styles.subheader}>Group Name</StyledText>
           <View style={styles.inputButton}>
             <StyledTextInput
               placeholder='Enter Group Name'
@@ -176,7 +186,7 @@ export default class CreateScreen extends React.Component {
           <View style={styles.inputButton}>
             <StyledTextInput
               placeholder='Enter Group Capacity'
-              keyboardType='numeric'
+              keyboardType='number-pad'
               clearTextOnFocus={false}
               style={styles.capacityInput}
               onChangeText={this._handleCapacityInput}
@@ -193,6 +203,13 @@ export default class CreateScreen extends React.Component {
             buttonStyle={styles.pickerButton}
             onPress={this._showDeadlinePicker}
           />
+          {this.state.deadlinePicked ?
+            <StyledText style={styles.subheader}>
+              {formatDate(this.state.deadline)}
+            </StyledText>
+            :
+            <StyledText style={styles.subheader} />
+          }
           <StyledDatePicker
             isVisible={this.state.deadlineModalVisible}
             onConfirm={this._handleDeadlinePicked}
@@ -205,6 +222,13 @@ export default class CreateScreen extends React.Component {
             buttonStyle={styles.pickerButton}
             onPress={this._showExchangePicker}
           />
+          {this.state.exchangePicked ?
+            <StyledText style={styles.subheader}>
+              {formatDate(this.state.exchange)}
+            </StyledText>
+            :
+            <StyledText style={styles.subheader} />
+          }
           <StyledDatePicker
             isVisible={this.state.exchangeModalVisible}
             onConfirm={this._handleExchangePicked}

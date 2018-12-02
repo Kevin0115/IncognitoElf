@@ -49,30 +49,43 @@ MongoClient.connect(url, { useNewUrlParser: true }, function(err, client) {
   });
 
   // For testing
-  app.get('/groups/', function(request, response) {
-    db.collection('groups').find({}).toArray((err, docs) => {
-      if (err) {
-        console.log(err);
-        response.error(err);
-      } else {
-        response.json(docs);
-      }
-    });
-  });
+  // app.get('/groups/', function(request, response) {
+  //   db.collection('groups').find({}).toArray((err, docs) => {
+  //     if (err) {
+  //       console.log(err);
+  //       response.error(err);
+  //     } else {
+  //       response.json(docs);
+  //     }
+  //   });
+  // });
 
   // groups/id endpoint: returns group object according to given group_id
-  app.get('/groups/:group_id', function(request, response) {
-    db.collection('groups').findOne({group_id: parseInt(request.params.group_id)}, (err, docs) => {
+  // app.get('/groups/:group_id', function(request, response) {
+  //   db.collection('groups').findOne({group_id: parseInt(request.params.group_id)}, (err, docs) => {
+  //     if (err) {
+  //       console.log(err);
+  //       response.error(err);
+  //     } else {
+  //       response.json(docs);
+  //     }
+  //   });
+  // });
+
+  // for homescreen ---------------------------------------------- IN USE
+  app.get('/groups/user/:user_id', function(request, response) {
+    console.log(request.params.user_id);
+    db.collection('groups').find({members: {$elemMatch: {user_id: request.params.user_id}}}).toArray((err, docs) => {
       if (err) {
         console.log(err);
-        response.error(err);
+        // response.error(err);
       } else {
         response.json(docs);
       }
     });
   });
 
-  // groups/create endpoint: creates new group
+  // groups/create endpoint: creates new group ------------ IN USE
   app.post('/groups/create', function(request, response) {
     var hashID = stringHash(request.body.group_name).toString();
     console.log(hashID);
@@ -87,9 +100,31 @@ MongoClient.connect(url, { useNewUrlParser: true }, function(err, client) {
         response.error(err);
       } else {
         console.log('Saved to DB');
-        response.json({status: "OK"});
+        response.json({status: 'OK'});
       }
     });
+  });
+
+  // Join group ---------------------------------------------- IN USE
+  app.put('/groups/join', function(request, response) {
+    db.collection('groups').findOneAndUpdate(
+      {group_id: request.body.group_id},
+      {$addToSet: 
+        {members: request.body.user}
+      },
+      (err, docs) => {
+        if (err) {
+          console.log(err);
+          response.error(err);
+        } else if (docs.value == null) {
+          console.log('Invalid Group Code');
+          response.status(400).send({error: 'Invalid Group Code'});
+        } else {
+          console.log('Saved to DB');
+          response.json({status: 'OK'});
+        }
+      }
+    );
   });
 
   // Configure '/users' endpoint
@@ -113,7 +148,7 @@ MongoClient.connect(url, { useNewUrlParser: true }, function(err, client) {
         response.error(err);
       } else {
         console.log('Saved to DB');
-        response.json({status: "OK"});
+        response.json({status: 'OK'});
       }
     });
   });

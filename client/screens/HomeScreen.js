@@ -1,5 +1,6 @@
 import React from 'react';
 import {
+  AsyncStorage,
   Image,
   ScrollView,
   StyleSheet,
@@ -17,16 +18,21 @@ export default class HomeScreen extends React.Component {
     super(props);
     this.state = {
       groupList: null,
+      userID: null,
     }
   }
 
-  componentDidMount() {
+  async componentDidMount() {
+    const userInfo = JSON.parse(await AsyncStorage.getItem('fbUser'));
+    this.setState({
+      userID: userInfo.id,
+    })
     this._retrieveData();
     this.props.navigation.addListener('willFocus', this._retrieveData);
   }
 
-  _retrieveData = () => {
-    fetch(BASE_URL + '/groups', {
+  _retrieveData = async () => {
+    fetch(BASE_URL + '/groups/user/' + this.state.userID, {
       method: 'GET',
     }).then((res) => res.json())
     .then((response) => {
